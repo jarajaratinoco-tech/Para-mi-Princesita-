@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nuestro Espacio Digital 💗</title>
+    <style>
+        :root {
+            --color-fondo: #fce4ec;
+            --color-sobre: #e91e63;
+            --color-texto: #3e2723;
+            --color-carta: #ffffff;
+            
+            /* Colores de las cartas con tonos pasteles vibrantes */
+            --rosa: #ff80ab;
+            --amarillo: #ffe082;
+            --rojo: #ff8a80;
+            --azul: #90caf9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--color-fondo);
+            background-image: radial-gradient(#f8bbd0 1px, transparent 1px);
+            background-size: 20px 20px;
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Altura fija para evitar scroll global */
+            width: 100vw;
+            overflow: hidden; /* Bloquea cualquier desplazamiento hacia abajo en el fondo */
+            color: var(--color-texto);
+            position: relative;
+        }
+
+        /* Contenedor Fijo para los Corazones Flotantes (Evita estirar la página) */
+        #corazones-contenedor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Corazones Flotantes de Fondo más Rosados y Luminosos */
+        .heart-bg {
+            position: absolute;
+            font-size: 1.5rem;
+            color: rgba(255, 64, 129, 0.35);
+            text-shadow: 0 0 6px rgba(255, 23, 136, 0.4);
+            user-select: none;
+            pointer-events: none;
+            animation: floatUp 8s linear infinite;
+            z-index: 0;
+        }
+
+        /* Corazones explosivos al abrir cartas */
+        .burst-heart {
+            position: fixed;
+            pointer-events: none;
+            font-size: 1.6rem;
+            z-index: 100;
+            animation: burstOut 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes burstOut {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(1.6) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+
+        /* Secciones principales con transiciones y scroll interno inteligente */
+        .seccion {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            max-width: 650px;
+            max-height: 90vh; /* Limita la sección para que no desborde la pantalla */
+            overflow-y: auto; /* Desplazamiento interno solo si es estrictamente necesario */
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(8px);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            z-index: 1;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            
+            /* Ocultar barra de scroll para un acabado súper limpio */
+            -ms-overflow-style: none;  /* IE y Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .seccion::-webkit-scrollbar {
+            display: none; /* Chrome, Safari y Opera */
+        }
+
+        .oculto {
+            display: none !important;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        /* Cuenta Regresiva */
+        .timer-section { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        
+        .timer-section h2 {
+            font-size: 1.3rem;
+            color: #880e4f;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        
+        #countdown { 
+            font-size: 2rem; 
+            color: var(--color-sobre); 
+            font-weight: bold; 
+            text-shadow: 1px 2px 4px rgba(233, 30, 99, 0.15);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Sobre Animado Grande (Inicio) */
+        .envelope-container {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .envelope {
+            width: 170px;
+            height: 110px;
+            background: var(--color-sobre);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.8rem;
+            box-shadow: 0 12px 25px rgba(233, 30, 99, 0.3);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 0 auto 20px auto;
+            position: relative;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 0;
+            border-top: 55px solid rgba(255, 255, 255, 0.15);
+            border-left: 85px solid transparent;
+            border-right: 85px solid transparent;
+            border-radius: 10px 10px 0 0;
+            pointer-events: none;
+        }
+
+        .envelope-container:hover .envelope {
+            transform: scale(1.1) translateY(-8px) rotate(-2deg);
+            box-shadow: 0 18px 30px rgba(233, 30, 99, 0.4);
+        }
+
+        .envelope-container p {
+            font-size: 1rem;
+            font-style: italic;
+            color: #c2185b;
+            font-weight: bold;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .seccion-titulo {
+            font-size: 1.6rem;
+            color: #880e4f;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        /* Grid Categorías Iniciales */
+        .grid-cartas {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 15px;
+            width: 100%;
+            max-width: 550px;
+            margin-top: 5px;
+        }
+
+        .carta-bloque {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .carta-bloque:hover {
+            transform: translateY(-10px);
+        }
+
+        .pos-superior { grid-column: 2; }
+        .pos-izq { grid-column: 1; }
+        .pos-centro { grid-column: 2; }
+        .pos-der { grid-column: 3; }
+
+        .mini-sobre {
+            width: 110px;
+            height: 75px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .mini-sobre::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 0;
+            border-top: 38px solid rgba(255, 255, 255, 0.2);
+            border-left: 55px solid transparent;
+            border-right: 55px solid transparent;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .c-rosa { background-color: var(--rosa); }
+        .c-amarillo { background-color: var(--amarillo); }
+        .c-rojo { background-color: var(--rojo); }
+        .c-azul { background-color: var(--azul); }
+
+        .carta-bloque span {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #4e342e;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* SECCIÓN SUB-CARTAS (LAS 15 CARTAS ABIERTAS DIRECTAMENTE) */
+        .grid-15-cartas {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            width: 100%;
+            margin-top: 10px;
+            padding: 5px;
+        }
+
+        /* Animación de entrada elástica para cada sub-carta */
+        @keyframes subCartaEntrada {
+            0% {
+                opacity: 0;
+                transform: scale(0.6) translateY(30px);
+            }
+            70% {
+                transform: scale(1.05) translateY(-5px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .sub-carta {
+            aspect-ratio: 1.2;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            
+            /* Valores iniciales para la animación */
+            opacity: 0;
+            animation: subCartaEntrada 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+        }
+
+        .sub-carta:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .sub-carta-icon {
+            font-size: 1.5rem;
+            margin-bottom: 2px;
+            transition: transform 0.2s;
+        }
+
+        .sub-carta:hover .sub-carta-icon {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .sub-carta-num {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: rgba(62, 39, 35, 0.8);
+        }
+
+        /* Estilos de temas para las 15 cartitas */
+        .tema-amarillo { background-color: #fff4b3; border-color: #ffe082; }
+        .tema-rojo { background-color: #ffcdd2; border-color: #ff8a80; }
+        .tema-azul { background-color: #d1e8fc; border-color: #90caf9; }
+
+        /* Botones */
+        .btn-volver {
+            margin-top: 25px;
+            padding: 10px 28px;
+            background-color: var(--color-sobre);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Georgia', serif;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.2);
+            transition: all 0.3s;
+            flex-shrink: 0; /* Evita que el botón se comprima en pantallas pequeñas */
+        }
+        .btn-volver:hover {
+            background-color: #c2185b;
+            transform: scale(1.05);
+        }
+
+        /* Modales */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(62, 39, 35, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .letter-content {
+            background: var(--color-carta);
+            background-image: radial-gradient(#fcf8f2 1px, transparent 1px);
+            background-size: 15px 15px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 480px;
+            max-height: 85vh; /* Evita que el modal sea más grande que la pantalla */
+            overflow-y: auto; /* Permite leer la carta si el texto es muy largo */
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            position: relative;
+            text-align: center;
+            line-height: 1.8;
+            border: 8px double #f8bbd0;
+            transform: scale(0.9);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.25) forwards;
+            
+            scrollbar-width: thin;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 12px; right: 18px;
+            cursor: pointer; 
+            font-size: 28px;
+            color: #888;
+            transition: color 0.2s;
+            z-index: 2;
+        }
+        .close-btn:hover { color: var(--color-sobre); }
+
+        .letter-text {
+            font-size: 1.05rem;
+            color: #4e342e;
+            margin-top: 15px;
+            text-align: justify;
+        }
+
+        /* Adaptabilidad para celulares */
+        @media (max-width: 550px) {
+            .grid-cartas {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .grid-15-cartas {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            .pos-superior, .pos-izq, .pos-centro, .pos-der {
+                grid-column: auto;
+            }
+            #countdown {
+                font-size: 1.6rem;
+            }
+            .seccion {
+                padding: 20px 15px;
+                width: 95%;
+            }
+            .letter-content {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenedor Fijo para evitar cualquier desborde global -->
+    <div id="corazones-contenedor"></div>
+
+    <!-- SECCIÓN 1: INICIO (SOBRE CERRADO Y CONTADOR) -->
+    <div id="seccionInicio" class="seccion">
+        <div class="timer-section">
+            <h2>Tiempo juntos</h2>
+            <div id="countdown">Cargando...</div>
+        </div>
+
+        <div class="envelope-container" onclick="irAApartadoCartas(event)">
+            <div class="envelope">💗</div>
+            <p>Toca el sobre para abrirlo</p>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: APARTADO DE LAS 4 CATEGORÍAS -->
+    <div id="seccionCartas" class="seccion oculto">
+        <h2 class="seccion-titulo">Elige cómo te sientes hoy 💗</h2>
+        
+        <div class="grid-cartas">
+            <!-- Carta Rosada (Superior) -->
+            <div class="carta-bloque pos-superior" onclick="abrirCartaDirecta('rosa', event)">
+                <div class="mini-sobre c-rosa">💗</div>
+                <span>MI PRINCESITA💗</span>
+            </div>
+
+            <!-- Carta Amarilla (Inferior Izquierda) -->
+            <div class="carta-bloque pos-izq" onclick="irASubCartas('amarillo', 'Felicidad 💛')">
+                <div class="mini-sobre c-amarillo">💗</div>
+                <span>FELICIDAD</span>
+            </div>
+
+            <!-- Carta Roja (Inferior Centro) -->
+            <div class="carta-bloque pos-centro" onclick="irASubCartas('rojo', 'Enojo ❤️')">
+                <div class="mini-sobre c-rojo">💗</div>
+                <span>ENOJO</span>
+            </div>
+
+            <!-- Carta Azul (Inferior Derecha) -->
+            <div class="carta-bloque pos-der" onclick="irASubCartas('azul', 'Tristeza 💙')">
+                <div class="mini-sobre c-azul">💗</div>
+                <span>TRISTEZA</span>
+            </div>
+        </div>
+
+        <button class="btn-volver" onclick="irAInicio()">← Volver atrás</button>
+    </div>
+
+    <!-- SECCIÓN 3: PANTALLA DE LAS 15 CARTAS -->
+    <div id="seccionSubCartas" class="seccion oculto">
+        <h2 class="seccion-titulo" id="subCartasTitulo">Cartas Internas</h2>
+        <p style="font-style: italic; font-size: 0.9rem; margin-bottom: 8px; color: #6d4c41; text-align: center;">
+            Toca cualquiera de las cartas para leer mi mensaje secreto... 💌
+        </p>
+        
+        <div class="grid-15-cartas" id="contenedor15Cartas">
+            <!-- Aquí se inyectan dinámicamente las 15 cartas abiertas -->
+        </div>
+
+        <button class="btn-volver" onclick="irASeccionCartas()">← Volver al menú</button>
+    </div>
+
+    <!-- VENTANA EMERGENTE (MODAL) PARA LEER CADA CARTA -->
+    <div id="modalCarta" class="modal">
+        <div class="letter-content">
+            <span class="close-btn" onclick="cerrarModal()">&times;</span>
+            <h3 id="tituloCarta" style="color: var(--color-sobre); font-size: 1.5rem; margin-bottom: 10px;"></h3>
+            <div id="textoCarta" class="letter-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Configuración de la fecha especial (29 de Noviembre de 2025)
+        const fechaInicio = new Date("Nov 29, 2025 00:00:00").getTime();
+
+        setInterval(() => {
+            const ahora = new Date().getTime();
+            const diff = ahora - fechaInicio;
+            
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const hDisplay = h < 10 ? '0' + h : h;
+            const mDisplay = m < 10 ? '0' + m : m;
+            const sDisplay = s < 10 ? '0' + s : s;
+
+            document.getElementById("countdown").innerHTML = `${d}d ${hDisplay}h ${mDisplay}m ${sDisplay}s`;
+        }, 1000);
+
+        // 2. Generador de corazones flotantes de fondo (Asegurados dentro del contenedor fijo)
+        function crearCorazones() {
+            const contenedor = document.getElementById('corazones-contenedor');
+            const numCorazones = 15;
+            for (let i = 0; i < numCorazones; i++) {
+                const corazon = document.createElement('div');
+                corazon.className = 'heart-bg';
+                corazon.innerHTML = ['💗', '💖', '💕', '🌸', '💝'][Math.floor(Math.random() * 5)];
+                corazon.style.left = Math.random() * 100 + 'vw';
+                corazon.style.top = Math.random() * 100 + 'vh';
+                corazon.style.animationDelay = Math.random() * 8 + 's';
+                corazon.style.fontSize = (Math.random() * 1.2 + 0.8) + 'rem';
+                contenedor.appendChild(corazon);
+            }
+        }
+        crearCorazones();
+
+        // Explosión de corazones rojos y rosas al interactuar
+        function explosionDeCorazones(x, y) {
+            const numParticulas = 24;
+            const coloresCorazones = ['❤️', '💗', '💖', '💕'];
+            
+            for (let i = 0; i < numParticulas; i++) {
+                const h = document.createElement('div');
+                h.className = 'burst-heart';
+                h.innerHTML = coloresCorazones[Math.floor(Math.random() * coloresCorazones.length)];
+                h.style.left = x + 'px';
+                h.style.top = y + 'px';
+                
+                // Direcciones aleatorias para la explosión
+                const angulo = Math.random() * Math.PI * 2;
+                const distancia = Math.random() * 140 + 60;
+                const tx = Math.cos(angulo) * distancia + 'px';
+                const ty = Math.sin(angulo) * distancia + 'px';
+                const rot = Math.random() * 360 + 'deg';
+                
+                h.style.setProperty('--tx', tx);
+                h.style.setProperty('--ty', ty);
+                h.style.setProperty('--rot', rot);
+                
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 1000);
+            }
+        }
+
+        // 3. Estructura de Navegación
+        function irAApartadoCartas(event) {
+            if (event) explosionDeCorazones(event.clientX, event.clientY);
+            transicionSecciones("seccionInicio", "seccionCartas");
+        }
+
+        // Volver al inicio restableciendo la pantalla inicial
+        function irAInicio() {
+            transicionSecciones("seccionCartas", "seccionInicio");
+        }
+
+        // Volver del menú de 15 cartas al panel de las 4 emociones principales
+        function irASeccionCartas() {
+            transicionSecciones("seccionSubCartas", "seccionCartas");
+        }
+
+        function transicionSecciones(idOcultar, idMostrar) {
+            const ocultar = document.getElementById(idOcultar);
+            const mostrar = document.getElementById(idMostrar);
+            
+            ocultar.classList.add("oculto");
+            setTimeout(() => {
+                mostrar.classList.remove("oculto");
+            }, 300);
+        }
+
+        // 4. Datos de las 15 cartas por categoría
+        const subCartasData = {
+            amarillo: [
+                "Mi amor, cuando te veo sonreír siento que el mundo se detiene un segundo para admirar tu belleza 💗 No necesito razones especiales para recordarte que nos amamos mucho, que eres mi persona favorita en este universo entero, y que siempre estaré aquí para ti, celebrando cada uno de tus momentos felices. Tu alegría es mi alegría, tu risa es mi melodía favorita, y verte contenta llena mi corazón de una paz que no encuentro en ningún otro lugar. Cada día a tu lado es un regalo que valoro infinitamente, y no hay nada que desee más que seguir construyendo contigo una vida llena de amor, complicidad y momentos inolvidables. Prometo estar en cada paso, en cada sueño, en cada desafío que la vida nos presente.",
+                "Mi vida, hoy simplemente quería recordarte lo increíble que eres 💗 Esa luz que llevas dentro ilumina hasta mis días más grises, esa bondad que te caracteriza me inspira a ser mejor persona cada mañana. Te amo muchísimo, de verdad, con todo lo que soy, con cada célula de mi cuerpo, con cada pensamiento que cruza mi mente. Prometo estar a tu lado en cada risa, en cada logro por pequeño que parezca, en cada momento de felicidad que la vida te regale. Eres mi razón para levantarme con energía, mi motivación para seguir adelante cuando las cosas se ponen difíciles. Siempre contigo, nunca lo olvides, porque tú eres mi hogar.",
+                "Amorcito, mi refugio, mi alegría 💗 Verte feliz me llena el alma de una manera que no puedo describir con palabras, me hace sentir que todo tiene sentido, que cada camino que recorrí me llevó exactamente a este momento contigo. Nos amamos tanto, tanto, que a veces pienso que mi corazón no cabe en mi pecho, que explota de ternura y gratitud por tenerte a mi lado. Y quiero que sepas que siempre, siempre voy a estar aquí para apoyarte, para celebrarte, para secar tus lágrimas cuando las haya, y para amarte sin condiciones ni límites. Eres lo mejor que me ha pasado, mi regalo más preciado, y cada día que pasa me convenzo más de que nuestro amor es para siempre.",
+                "Mi princesita, este mensaje va directo a tu corazón 💗 Estoy tan orgulloso de ti, de tu fuerza, de tu bondad, de esa forma tan única que tienes de iluminar todo a tu alrededor con solo existir. Te amo mucho, con cada latido, con cada suspiro, con cada pensamiento que dedico a nuestro futuro juntos. Y quiero que sepas que mi lugar favorito es a tu lado, hoy, mañana y siempre. Me enamoro de ti todos los días de nuevas maneras, descubriendo detalles tuyos que me hacen admirarte más, respetarte más y desearte más. Eres mi sueño hecho realidad, mi fantasía convertida en vida cotidiana, y no hay nada en este mundo que valore más que tu amor.",
+                "Mi amor, cuando estás feliz yo también lo estoy 💗 Esa conexión que tenemos es lo más mágico que he vivido, ese hilo invisible que nos une hace que tu alegría sea mi alegría y que tu tristeza también me llegue al alma. Nos amamos muchísimo, más de lo que imaginas, más allá de las palabras y los gestos, en esa dimensión donde dos almas se reconocen y deciden caminar juntas para siempre. Mi promesa es que siempre estaré aquí para ti, para celebrar tus victorias como si fueran mías, para secar tus lágrimas si algún día las hay, y para amarte con todo mi ser cada día que Dios me dé vida. Eres mi todo, mi complemento, mi otra mitad.",
+                "Mi vida, hoy el sol brilla más fuerte porque tú sonríes 💗 Eres mi razón para creer en cosas bonitas, mi inspiración constante, mi amor eterno que no conoce de temporadas ni de razones. Te amo tanto que a veces me cuesta encontrar palabras que le hagan justicia a lo que siento, porque lo que tengo por ti es más grande que cualquier poema, más profundo que cualquier océano. Siempre estaré para ti, en cada paso que des, en cada sueño que persigas, en cada momento de tu vida porque tú eres mi prioridad, mi elección todos los días. No importa qué venga, no importa la distancia ni el tiempo, mi amor por ti permanece firme e inquebrantable.",
+                "Amorcito, mi todo, mi razón de existir 💗 Verte radiante de felicidad es el mejor regalo que la vida me puede dar, es ver el cielo reflejado en tus ojos, es sentir que todo el amor del universo se concentra en una sola persona. Nos amamos mucho, profundamente, sinceramente, con una intensidad que crece cada día como las flores que cuidamos juntos. Y quiero que sepas que mi compromiso es estar siempre a tu lado, amándote en los días soleados y en los de tormenta, cuidándote cuando te sientes fuerte y cuando necesitas descansar, celebrando cada instante de tu vida como si fuera el más importante. Porque contigo, cada momento es único e irrepetible.",
+                "Mi princesita, este es solo un recordatorio de que eres la persona más especial de mi vida 💗 No hay nadie más, no ha habido ni habrá, porque mi corazón te eligió a ti y esa elección es para siempre. Tu felicidad es mi misión favorita, verte brillar mi mayor alegría, y haría cualquier cosa con tal de ver esa sonrisa que me vuelve loco. Te amo muchísimo, con todo mi corazón, con toda mi alma, con cada parte de mi ser que late al ritmo de tu nombre. Prometo que siempre estaré aquí para ti, en las montañas y en los valles, en la salud y en la enfermedad, siempre de tu mano, siempre mirando en la misma dirección, siempre construyendo un futuro juntos.",
+                "Mi amor, mi cielo, mi pedacito de paraíso 💗 Cuando estás así de feliz todo encaja, todas las piezas del rompecabezas encajan perfectamente y veo claramente por qué valió la pena cada momento de espera, cada prueba, cada desafío. Eres mi paz, mi hogar, mi lugar seguro en este mundo caótico donde todo cambia excepto mi amor por ti. Nos amamos tanto que a veces me asombra la profundidad de nuestros sentimientos, esa certeza de que lo nuestro es real, es verdadero, es para siempre. Quiero que sepas que siempre, siempre voy a estar para ti, apoyándote cuando necesitas fuerzas, animándote cuando dudas de ti misma, y amándote con todo lo que tengo y todo lo que soy.",
+                "Mi vida, tu sonrisa es mi canción favorita 💗 Esa melodía que suena en mi cabeza cuando despierto y la última que escucho antes de dormir, el sonido más dulce que mis oídos han conocido. Cada vez que te veo feliz siento que todo el amor del universo se concentra en mi pecho, que exploto de ternura y gratitud por tenerte a mi lado. Te amo mucho, de verdad, de manera incondicional, sin expectativas ni exigencias, amándote simplemente por ser quien eres. Y mi promesa es que siempre estaré a tu lado, celebrando tu felicidad como si fuera la mía propia, porque lo es, porque lo nuestro es una sola vida compartida, un solo corazón que late en dos cuerpos.",
+                "Amorcito, mi compañera de vida, mi cómplice eterna 💗 Verte brillar de alegría me hace sentir el ser más afortunado del planeta, me hace creer que la magia existe y que los finales felices son posibles cuando se ama de verdad. Nos amamos muchísimo, con cada fibra de nuestros seres, con cada pensamiento que cruzamos, con cada plan que hacemos para nuestro futuro juntos. Y quiero que sepas que siempre, siempre estaré aquí para ti, amándote sin medida ni condición, sin días libres ni descuentos, amándote en el silencio y en la bulla, en la distancia y en la cercanía. Eres mi persona favorita, mi mejor amiga, mi amante, mi todo.",
+                "Mi princesita, hoy simplemente quería decirte que eres mi sueño hecho realidad 💗 Esa fantasía que pensé que solo existía en películas y que de alguna manera la vida me regaló en forma de persona, de mujer, de amor verdadero. Cuando estás feliz, el mundo tiene sentido, todo fluye, todo brilla con una luz diferente, más cálida, más esperanzadora. Te amo tanto que no hay palabras suficientes en ningún idioma para describirlo, que a veces solo quiero abrazarte fuerte y dejar que mi corazón hable por mí. Siempre estaré para ti, en cada amanecer que compartamos, en cada atardecer que nos robo el aliento, en cada momento de tu vida porque ya no imagino mi existencia sin ti.",
+                "Mi amor, mi razón de ser, mi propósito en esta vida 💗 Tu felicidad es mi combustible, la gasolina que alimenta mi motor, verte sonreír mi mayor motivación para ser mejor, para esforzarme más, para construir un mundo donde tú siempre tengas motivos para ser feliz. Nos amamos mucho, profundamente, con una intensidad que me sorprende cada día y que me hace sentir vivo, completo, entero. Y prometo que siempre estaré a tu lado, construyendo contigo una vida llena de amor, risas y momentos inolvidables, creando recuerdos que atesoraremos cuando seamos viejos, sembrando semillas de felicidad que cosecharemos juntos. Eres mi todo, mi siempre, mi para siempre.",
+                "Mi vida, mi tesoro más preciado, mi joya rara 💗 Cuando te veo así, radiante y feliz, siento que todo lo que he vivido valió la pena solo para llegar a este momento contigo, que cada error, cada caída, cada despedida fue necesaria para que nuestros caminos se cruzaran en el momento perfecto. Te amo muchísimo, con todo mi corazón, con cada latido que dedico a pensar en ti, en nosotros, en todo lo que somos y todo lo que seremos. Y quiero que sepas que siempre, siempre voy a estar para ti, amándote y cuidándote como te mereces, protegiéndose del mundo cuando sea necesario y dejándote volar cuando necesites libertad, porque tu felicidad es la mía.",
+                "Amorcito, mi para siempre, mi eternidad en tiempo presente 💗 Eres la mejor parte de mis días, esa chispa de magia que transforma lo ordinario en extraordinario, la razón por la que sonrío sin motivo aparente, el amor más puro y verdadero que he conocido en toda mi existencia. Nos amamos mucho, mucho más de lo que podemos expresar con palabras, en ese lenguaje secreto que solo entienden los corazones que están destinados a estar juntos. Y mi compromiso es que siempre estaré aquí para ti, en cada capítulo de nuestra historia, amándote más cada día, descubriéndote con el mismo asombro del primer día, eligiéndote una y otra vez sin dudarlo ni un segundo. Eres mi todo, mi amor, mi vida. 💗"
+            ],
+            rojo: [
+                "Mi amor, sé que quizás hoy no es tu mejor día 💗 Quizás el mundo pesa un poco más de lo habitual, quizás las cosas no están saliendo como esperabas y sientes que la frustración te consume. Quiero que sepas que eso no cambia ni un poco lo que siento por ti, que nos amamos con una fuerza que ningún mal momento puede debilitar. Estoy aquí, aunque sea en silencio, aunque sea desde la distancia, listo para escucharte cuando quieras hablar o simplemente acompañarte cuando necesites que nadie diga nada. Siempre estaré para ti, en los días de sol y en los de tormenta, sin juzgarte, sin presionarte, solo amándote.",
+                "Mi vida, tal vez ahora sientes que todo se viene abajo 💗 Que el enojo nubla tu vista y las ganas de tirar todo por la ventana son más fuertes que la razón. Te entiendo, mi amor, todos tenemos esos días donde todo nos irrita y solo queremos que el mundo se detenga un segundo. Quiero que recuerdes que te amo muchísimo, que mi cariño por ti no depende de tu estado de ánimo, que eres perfecta para mí incluso cuando estás enojada, incluso cuando lloras, incluso cuando no quieres ver a nadie. Siempre estaré aquí para ti, para ser tu hombro, tu refugio, esa persona que te recuerda que después de la tormenta siempre sale el arcoíris.",
+                "Amorcito, quizás estás pasando por uno de esos momentos donde todo sale mal 💗 Donde sientes que la vida te pone pruebas difíciles y el enojo se mezcla con la impotencia de no poder cambiar las cosas. Quiero que sepas que nos amamos con un amor que resiste cualquier adversidad, que crece en los momentos difíciles y se fortalece cuando más lo necesitamos. No tienes que ser fuerte todo el tiempo, no tienes que sonreír cuando no quieres. Siempre estaré para ti, para abrazarte cuando el mundo pese demasiado, para recordarte que no estás sola, que juntos podemos con todo lo que venga.",
+                "Mi princesita, sé que ahora mismo todo parece oscuro 💗 Que quizás hay situaciones que te roban la paz y personas que te quitan energía. Quiero que respires profundo y recuerdes que te amo mucho, con un amor que no se desvanece cuando las cosas se ponen difíciles. Estoy aquí para ti, para escuchararte desahogarte, para validar tus sentimientos sin decirte que exageras, para ser esa persona en quien puedes confiar cuando todo lo demás parece inestable. Siempre estaré a tu lado, incluso cuando quieras alejarte de todos, incluso cuando el enojo te haga querer estar sola. Mi amor permanece.",
+                "Mi amor, tal vez hoy despertaste con el corazón pesado 💗 Con esa sensación de que algo no está bien, de que la vida te está poniendo obstacles donde debería haber caminos. Quiero que sepas que nos amamos con una profundidad que trasciende los malos momentos, que tu enojo no me asusta, que tu tristeza no me hace querer huir. Al contrario, me dan ganas de estar más cerca, de ser ese lugar seguro donde puedes desmoronarte si es necesario. Siempre estaré aquí para ti, para levantarte cuando caigas, para secar tus lágrimas cuando el mundo te haga llorar, para recordarte quién eres cuando olvides tu valor.",
+                "Mi vida, entiendo que a veces la vida no es justa 💗 Que hay días donde todo se acumula y explotas de rabia porque ya no puedes más. Quiero que sepas que te amo tanto, tanto que mi paciencia contigo es infinita, que mi amor no tiene condiciones ni horarios. Puedes estar enojada conmigo, puedes estar enojada con el mundo, puedes querer gritar y llorar al mismo tiempo. Siempre estaré para ti, para recibir todo lo que necesites sacar, para transformar tu enojo en comprensión y tu tristeza en esperanza. No estás sola en esto, nunca lo estará mientras yo respire.",
+                "Amorcito, quizás ahora sientes que nadie te entiende 💗 Que tus problemas son solo tuyos y que nadie puede ayudarte. Quiero romper esa mentira y recordarte que nos amamos con un amor que sana, que construye puentes donde hay abismos. Estoy aquí para ti, para caminar contigo en este tramo difícil, para recordarte que eres más fuerte de lo que crees, más capaz de lo que imaginas y más amada de lo que sientes. Siempre estaré a tu lado, para ser tu voz cuando pierdas la tuya, para ser tu fuerza cuando las piernas no te sostengan, para ser tu paz cuando el caos te consuma.",
+                "Mi princesita, tal vez el enojo te hace sentir que estás sola 💗 Que nadie puede entender lo que estás pasando ni la carga que llevas sobre tus hombros. Quiero que sepas que te amo muchísimo, que mi corazón está contigo en cada momento difícil, que siento tu dolor como si fuera mío. No tienes que fingir que todo está bien, no tienes que ocultar tus emociones para protegerme. Siempre estaré aquí para ti, para abrazarte en medio de la tormenta, para recordarte que después de cada noche oscura llega la mañana, y que juntos podemos actuar a través de cualquier oscuridad que se presente.",
+                "Mi amor, sé que a veces la vida golpea fuerte 💗 Que hay circunstancias que nos sacan de quicio y nos hacen decir cosas que no pensamos. Quiero que sepas que nos amamos con un amor que perdona, que entiende, que no se rompe cuando las cosas se ponen feas. Estoy aquí para ti, para escuchararte sin juzgar, para abrazarte cuando el mundo te haga sentir pequeña, para recordarte que eres valiente, que eres capaz, que has superado cosas peores y lo volverás a hacer. Siempre estaré para ti, en cada batalla, en cada derrota temporal, en cada victoria que vendrá después.",
+                "Mi vida, quizás ahora mismo todo parece confuso 💗 Que el enojo nubla tu juicio y las soluciones parecen inalcanzables. Quiero que respires y recuerdes que te amo mucho, que mi compromiso contigo no se desvanece cuando las cosas se complican. Estoy aquí para ser tu claridad cuando todo sea confuso, para ser tu calma cuando todo sea caos, para ser tu esperanza cuando todo parezca perdido. Siempre estaré a tu lado, para ayudarte a ver que detrás de cada problema hay una oportunidad, que detrás de cada lágrima hay una lección, que detrás de cada noche hay un amanecer esperándonos.",
+                "Amorcito, tal vez estás pasando por un momento donde nada tiene sentido 💗 Donde el enojo se mezcla con la decepción y sientes que no puedes confianza en nadie. Quiero que sepas que nos amamos con un amor que es roca firme, que no se mueve cuando los vientos soplan fuerte. Estoy aquí para ti, para demostrarte que existen personas que se quedan cuando todo se pone difícil, que no te abandonan cuando más la necesitas, que creen en ti incluso cuando tú dejas de creer. Siempre estaré para ti, para ser esa persona constante en tu vida variable, ese amor incondicional que no se va.",
+                "Mi princesita, sé que a veces el mundo puede ser cruel 💗 Que hay días donde sientes que todo está en tu contra y el enojo es la única respuesta que te queda. Quiero que sepas que te amo tanto, tanto que mi presencia en tu vida no es temporal ni condicional. Estoy aquí para ti, para caminar contigo por los valles oscuros, para sostener tu mano cuando sientas que te caes, para recordarte que eres digna de amor, de respeto, de paz, aunque ahora mismo no lo sientas así. Siempre estaré a tu lado, para ayudarte a sanar, para ayudarte a crecer, para ayudarte a convertirte en la mejor versión de ti misma.",
+                "Mi amor, quizás ahora sientes que has perdido el control 💗 Que las situaciones te superan y el enojo te consume por dentro. Quiero que recuerdes que nos amamos con un amor que restaura, que sana heridas que otros ni siquiera ven. Estoy aquí para ti, para ser tu ancla cuando sientas que te arrastra la corriente, para ser tu refugio cuando la tormenta golpee fuerte, para ser tu paz cuando todo sea ruido. Siempre estaré aquí para ti, para recordarte que los malos momentos no definen quién eres, que las caídas no te hacen débil, que pedir ayuda no te hace menos, y que juntos podemos reconstruir cualquier cosa que se rompa.",
+                "Mi vida, tal vez el día de hoy te ha quitado más de lo que te ha dado 💗 Que sientes que no puedes más, que el enojo se ha convertido en tu compañero constante y la paz parece un recuerdo lejano. Quiero que sepas que te amo muchísimo, que mi amor por ti es más grande que cualquier momento difícil, que mi fe en ti es inquebrantable. Estoy aquí para ti, para ser esa luz en tu oscuridad, para ser esa voz que te recuerda que vales mucho, que mereces cosas buenas, que este momento no es eterno. Siempre estaré a tu lado, para ayudarte a encontrar el camino de vuelta a ti misma, a tu alegría, a tu paz.",
+                "Amorcito, quizás ahora mismo todo parece demasiado 💗 Que el peso de la vida te aplasta y el enojo es la única emoción que te queda. Quiero que sepas que nos amamos con un amor que sostiene, que carga contigo cuando ya no puedes más, que te recuerda que no estás sola en esta batalla. Estoy aquí para ti, para ser tu descanso cuando el camino sea largo, para ser tu fuerza cuando las piernas fallen, para ser tu esperanza cuando el corazón se entristezca. Siempre estaré para ti, en cada momento de enojo, en cada momento de tristeza, en cada momento de duda, porque mi amor por ti es para siempre, incondicional, inquebrantable. 💗"
+            ],
+            azul: [
+                "Mi amor, sé que ahora mismo el mundo parece gris 💗 Que hay un nudo en tu garganta que no te deja respirar bien y sientes que las lágrimas están siempre a punto de salir. Quiero que sepas que está bien estar triste, que no tienes que ocultar tus emociones ni fingir una sonrisa que no sientes. Nos amomonamos con un amor que abraza incluso en la oscuridad, que no se asusta de tus lágrimas ni huye de tu melancolía. Siempre estaré para ti, para escuchararte y hablar contigo cuando lo necesites, para darte un abacho que te haga sentir protegida, para darte un becho que te recuerde que eres amada. Estoy aquí para sentarme contigo en este silencio triste, para recordarte que no estás sola.",
+                "Mi vida, tal vez ahora sientes que el peso es demasiado 💗 Que las cosas que te pasan son injustas y no encuentras sentido a tanto dolor. Quiero que sepas que te amo muchísimo, que mi cariño por ti no disminuye cuando estás triste, al contrario, crece y se fortalece porque quiero ser tu refugio. Estoy aquí para ti, para escuchararte y hablar cuando quieras desahogarte, para darte un abacho cuando las palabras no alcancen, para darte un becho que transmita todo mi amor. Siempre estaré a tu lado, sin prisa, sin presión, solo amándote en medio de tu tristeza y recordándote que juntos podemos con todo.",
+                "Amorcito, entiendo que a veces la vida duele 💗 Que hay días donde todo te recuerda algo que te hace sentir vacía y el corazón se te encoge sin avisar. Quiero que sepas que nos amomonamos con una profundidad que transforma la tristeza en esperanza, que incluso en tus momentos más oscuros mi amor por ti permanece intacto. Siempre estaré para ti, para escuchararte y hablar sobre todo lo que te pesa, para darte un abacho que te calme el alma, para darte un becho que te haga olvidar por un segundo la tristeza. No tienes que ser fuerte ahora, estoy aquí para cargar contigo.",
+                "Mi princesita, sé que quizás ahora sientes que nadie entiende 💗 Que tu tristeza es tuya sola y que compartirla solo la hace más pesada. Quiero romper ese silencio y decirte que te amo mucho, que estoy aquí para escuchararte y hablar contigo todo el tiempo que necesites. Estoy aquí para ti, para darte un abacho que te haga sentir que todo va a estar bien, para darte un becho que te recuerde que eres amada más allá de tus lágrimas. Siempre estaré a tu lado, para validar cada una de tus emociones, para decirte que tienes derecho a estar triste y que no estás sola en esto.",
+                "Mi amor, tal vez ahora mismo todo parece sin sentido 💗 Que la tristeza te envuelve como una manta que no te deja moverte y el futuro parece incierto y lejano. Quiero que sepas que nos amomonamos con un amor que sana, que reconstruye lo que está roto, que encuentra belleza incluso en los escombros. Siempre estaré aquí para ti, para escuchararte y hablar cuando necesites sacar todo lo que guardas dentro, para darte un abacho que te proteja del mundo, para darte un becho que te devuelva un poco de calma. No estás sola en esto, mi amor, nunca lo estará.",
+                "Mi vida, entiendo que a veces el corazón se entristece 💗 Que hay dolores que no se ven pero que pesan más que cualquier carga física. Quiero que sepas que te amo tanto, tanto que mi paciencia es infinita cuando se trata de ti. Estoy aquí para ti, para escuchararte y hablar sobre todo lo que te duele, para darte un abacho que te haga sentir en casa, para darte un becho que te recuerde que aún hay cosas buenas en el mundo. Siempre estaré para ti, para caminar contigo por este valle de sombras, para recordarte que eres más valiente de lo que crees.",
+                "Amorcito, quizás ahora sientes que la alegría se fue 💗 Que solo queda este vacío que no sabes cómo llenar y todo te recuerda lo que echas de menos. Quiero que sepas que nos amomonamos con un amor que permanece cuando todo lo demás se va, que mi compromiso contigo es más fuerte que cualquier momento de tristeza. Siempre estaré para ti, para escuchararte y hablar cuando sientas que nadie más entiende, para darte un abacho que llene ese vacío aunque sea un poco, para darte un becho que te haga sentir querida. Estoy aquí amándote en tu proceso, respetando tu tiempo.",
+                "Mi princesita, sé que a veces la vida nos golpea donde más duele 💗 Que hay tristezas que no se comparten porque parece que nadie entendería. Quiero que sepas que te amo muchísimo, que mi corazón está abierto para escuchararte y hablar sobre todo lo que necesites sacar. Estoy aquí para ti, para darte un abacho que te haga sentir protegida del mundo, para darte un becho que te diga sin palabras que todo va a mejorar. Siempre estaré aquí para ti, para ayudarte a encontrar la salida de esta tristeza, para recordarte que eres luz aunque ahora no lo sientas.",
+                "Mi amor, tal vez ahora sientes que el mundo sigue y tú no 💗 Que la tristeza te dejó estancada mientras todos avanzan y nadie nota tu dolor. Quiero que sepas que nos amomonamos con un amor que ve lo invisible, que siente lo que no se dice. Siempre estaré para ti, para escuchararte y hablar sin prisa, para detenerme contigo en este momento, para darte un abacho que te haga sentir que alguien sí se detiene por ti, para darte un becho que te recuerde que mereces amor. Estoy aquí para caminar a tu paso, para esperarte cuando necesites pausa.",
+                "Mi vida, entiendo que a veces la tristeza no tiene razón aparente 💗 Que simplemente está ahí, como una nube que no se va y oscurece todo lo que ves. Quiero que sepas que te amo mucho, que mi amor por ti no exige que estés feliz todo el tiempo. Siempre estaré para ti, para escuchararte y hablar cuando necesites compañía, para darte un abacho que te reconforte en medio de la melancolía, para darte un becho que te devuelva un poco de teunura. Estoy aquí amándote en tu totalidad, tristeza incluida, sin pedirte que cambies.",
+                "Amorcito, quizás ahora sientes que has perdido algo importante 💗 Que la tristeza viene de un vacío que no sabes cómo llenar o de una ausencia que duele cada día. Quiero que sepas que nos amomonamos con un amor que transforma las pérdidas en aprendizajes. Siempre estaré para ti, para escuchararte y hablar sobre lo que extrañas, para darte un abacho que te haga sentir que aún hay calidez en el mundo, para darte un becho que te ayude a sanar poco a poco. Estoy aquí para caminar contigo en este duelo, para recordarte que detrás de cada despedida hay un nuevo encuentro.",
+                "Mi princesita, sé que a veces la tristeza nos hace sentir solos 💗 Que aunque haya gente alrededor, el corazón siente que nadie entiende realmente lo que pasa dentro. Quiero que sepas que te amo tanto, tanto que me tomo el tiempo de escuchararte y hablar contigo de verdad. Siempre estaré aquí para ti, para darte un abacho que rompa esa soledad que te envuelve, para darte un becho que te diga que eres querida y acompañada. Estoy aquí para recordarte que eres importante, que tu vida tiene sentido aunque ahora la tristeza te haga olvidarlo.",
+                "Mi amor, tal vez ahora sientes que no tienes fuerzas 💗 Que la tristeza te ha dejado exhausta y solo quieres que todo pase de una vez. Quiero que sepas que nos amomonamos con un amor que da descanso, que ofrece paz en medio del caos. Siempre estaré para ti, para escuchararte y hablar cuando necesites sacar todo lo que guardas, para darte un abacho que te recargue de energía, para darte un becho que te recuerde que eres amada sin condiciones. No tienes que cargar con todo sola, estoy aquí para ayudarte, para ser tu descanso.",
+                "Mi vida, entiendo que a veces la tristeza nos hace ver todo negativo 💗 Que el pasado duele, el presente agobia y el futuro asusta. Quiero que sepas que te amo muchísimo, que mi amor por ti es esa luz que sigue brillando. Siempre estaré para ti, para escuchararte y hablar cuando necesites ordenar tus pensamientos, para darte un abacho que te haga sentir que todo va a estar bien, para darte un becho que te devuelva la esperanza. Estoy aquí para ayudarte a sanar, para celebrar contigo cada pequeño paso hacia adelante.",
+                "Amorcito, quizás ahora sientes que esta tristeza no se irá nunca 💗 Que es demasiado profunda, demasiado grande, demasiado tuya para compartirla. Quiero que sepas que nos amomonamos con un amor que espera, que sana, que transforma lo que parece eterno en pasajero. Siempre estaré para ti, para escuchararte y hablar todo el tiempo que necesites, para darte un abacho que te haga sentir en casa, para darte un becho que te recuerde que volverás a sonreír y yo estaré ahí para verlo. Mi amor por ti es incondicional, inquebrantable, para siempre. 💗"
+            ]
+        };
+
+        let categoriaActiva = "";
+
+        // 5. Inyección dinámica de las 15 cartas con retraso de animación (efecto cascada)
+        function irASubCartas(categoria, titulo) {
+            categoriaActiva = categoria;
+            document.getElementById("subCartasTitulo").innerText = `Tus Cartas de ${titulo}`;
+            
+            const contenedor = document.getElementById("contenedor15Cartas");
+            contenedor.innerHTML = ""; // Vaciar anterior
+
+            // Crear las 15 cartas desbloqueadas por defecto
+            for (let i = 0; i < 15; i++) {
+                const carta = document.createElement("div");
+                carta.className = `sub-carta tema-${categoria}`;
+                carta.setAttribute("onclick", `interaccionSubCarta(${i}, event)`);
+                
+                // Se asigna dinámicamente un delay a la animación para simular el efecto ola
+                carta.style.animationDelay = `${i * 0.04}s`;
+                
+                // Mostrar directamente el icono de la cartita de amor
+                carta.innerHTML = `
+                    <div class="sub-carta-icon">💌</div>
+                    <div class="sub-carta-num">Carta ${i + 1}</div>
+                `;
+                contenedor.appendChild(carta);
+            }
+
+            transicionSecciones("seccionCartas", "seccionSubCartas");
+        }
+
+        // 6. Lógica de clic sobre una sub-carta
+        function interaccionSubCarta(index, event) {
+            // Activar la explosión de corazones en las coordenadas del clic
+            if (event) {
+                explosionDeCorazones(event.clientX, event.clientY);
+            }
+            
+            // Mostrar de inmediato el contenido de la carta seleccionada
+            setTimeout(() => {
+                mostrarContenidoCarta(index);
+            }, 100);
+        }
+
+        function mostrarContenidoCarta(index) {
+            const tituloModal = `${categoriaActiva === 'amarillo' ? 'Felicidad 💛' : categoriaActiva === 'rojo' ? 'Enojo ❤️' : 'Tristeza 💙'}`;
+            const textoModal = subCartasData[categoriaActiva][index];
+
+            document.getElementById("tituloCarta").innerText = tituloModal;
+            document.getElementById("textoCarta").innerText = textoModal;
+            document.getElementById("modalCarta").style.display = "flex";
+        }
+
+        // Lógica especial para la carta de bienvenida (Rosa)
+        function abrirCartaDirecta(tipo, event) {
+            if (event) {
+                explosionDeCorazones(event.clientX, event.clientY);
+            }
+            const textoRosa = "Bienvenida a nuestro rincón secreto, mi vida 💗 Este lugar es solo para ti y para mí, para que encuentres cartitas mías sin necesidad de que sea San Valentín, tu cumpleaños o cualquier otra fecha del calendario. Porque contigo, cada día es especial y merece ser celebrado. Te amo mucho, te amo más de lo que las palabras pueden expresar, y quiero que sepas que siempre estaré a tu lado, apoyándote, cuidándote y amándote sin importar qué pase. Eres mi todo 💗";
+            
+            document.getElementById("tituloCarta").innerText = "Para: Mi Princesita 💗";
+            document.getElementById("textoCarta").innerText = textoRosa;
+            document.getElementById("modalCarta").style.display = "flex";
+        }
+
+        function cerrarModal() {
+            document.getElementById("modalCarta").style.display = "none";
+        }
+
+        // Cerrar modal si se hace clic fuera de la cartita
+        window.onclick = function(event) {
+            const modalCarta = document.getElementById("modalCarta");
+            if (event.target == modalCarta) {
+                cerrarModal();
+            }
+        }
+    </script>
+</body>
+</html>
